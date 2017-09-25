@@ -23,9 +23,11 @@ module Bot
             # メンバー一覧表示
             command(:members, usage: 'members', description: 'メンバーの一覧を表示') do |event|
                 members = event.server.members
-                m_ary = members.map {|member| "@#{member.name}"}
+                total = members.size
+                members_name = members.map {|member| "@#{member.name}"}
                 event.channel.send_embed do |embed|
-                    embed.add_field(name: '__Members__', value: "#{m_ary.join("\n")}")
+                    embed.add_field(name: '__Members__', value: "#{members_name.join("\n")}")
+                    embed.add_field(name: '__Total__', value: "#{total}")
                 end
             end
 
@@ -57,17 +59,43 @@ module Bot
                 end
             end
 
-            # 役職ごとのメンバーを一覧表示
-            command(:roleMembers, usage: 'roleMembers', description: '役職ごとのメンバーを一覧表示') do |event|
-                # 役職一覧を取得
-                event.server.roles.each do |role|
-                    # @everyoneはスキップする
-                    next if role.name == "@everyone"
-                    m_ary = role.members.map {|member| "@#{member.name}"}
+            command(:roleMembers, usage: 'roleMembers <役職名>', description: "役職ごとのメンバーを一覧表示\n引数に指定した役職のみ表示も可能") do |event, rolename|
+                # 引数チェック
+                if rolename.nil?
+                    # 引数無しの時
+                    roles = Array.new
+
+                    # 役職一覧を取得
+                    event.server.roles.each do |role|
+                        # @everyoneはスキップする
+                        next if role.name == "@everyone"
+                        # 役職のメンバーがいない時はスキップ
+                        next if role.members.empty?
+                        # 役職を配列に追加
+                        roles << role
+                    end
+
                     # 埋め込みで役職ごとのメンバーを表示
                     event.channel.send_embed do |embed|
-                        # 配列を改行文字で結合
-                        embed.add_field(name: "__Members in #{role.name}__", value: "#{m_ary.join("\n")}")
+                        roles.each do |role|
+                            members_name = role.members.map {|member| "#{member.name}"}
+                            embed.add_field(name: "__Members in #{role.name}__", value: "#{members_name.join("\n")}")
+                            embed.add_field(name: '__Total__', value: "#{members_name.size}")
+                        end
+                    end
+                else
+                    # 引数有りの時
+                    # 引数と役職名が一致するものを抜き出す
+                    role = event.server.roles.find {|role| role.name == rolename}
+                    unless role.nil?
+                        members_name = role.members.map {|member| "@#{member.name}"}
+                        event.channel.send_embed do |embed|
+                            embed.add_field(name: "__Members in #{role.name}__", value: "#{members_name.join("\n")}")
+                            embed.add_field(name: '__Total__', value: "#{members_name.size}")
+                        end
+                    else
+                        event.respond '一致する役職がありません'
+                        break
                     end
                 end
             end
