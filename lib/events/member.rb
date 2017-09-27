@@ -1,5 +1,5 @@
 module Bot
-    module DiscordCommands
+    module DiscordEvents
         module MemberEvent
             extend Discordrb::EventContainer
             
