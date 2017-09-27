@@ -6,15 +6,19 @@ module Bot
             require 'nokogiri'
             require 'capybara/poltergeist'
 
-            STEAM_SEARCH_URL = 'https://steamcommunity.com/search/users/#text='
-            PROFILE_REGEXP = /https?:\/\/steamcommunity.com\/profiles\//
+            OSU_API = 'https://osu.ppy.sh/api/get_user'
+            FLAG_URL = 'https://github.com/SlavkoPekaric/Country-Flags-Responsive-CSS-Sprite/raw/master/img/separate/'
 
-            command(:osu, usage: 'osu <ユーザー名>', description: 'osu!のユーザー情報を表示') do |event, id|
+            STEAM_SEARCH_URL = 'https://steamcommunity.com/search/users/#text='
+            STEAM_PLAYER_API = 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='
+            STEAM_VANITY_API = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key='
+            STEAM_PROFILE_REGEXP = /https?:\/\/steamcommunity.com\/profiles\//
+
+            command(:osu, usage: 'osu <ユーザー名>', description: 'osu!のユーザー情報を表示', min_args: 1) do |event, id|
 
                 # osu!のユーザー情報取得
-                apiurl  = CONFIG[:osu][:apiurl]
                 apikey  = CONFIG[:osu][:apikey]
-                json    = get_json("#{apiurl}?k=#{apikey}&u=#{id}&type=string")[0]
+                json    = get_json("#{OSU_API}?k=#{apikey}&u=#{id}&type=string")[0]
 
                 rank = "**SS** : #{json["count_rank_ss"]} / **S** : #{json["count_rank_s"]} / **A** : #{json["count_rank_a"]}"
                 country_rank = "##{json["pp_country_rank"].with_comma}"
@@ -27,7 +31,7 @@ module Bot
                     )
                     embed.footer = Discordrb::Webhooks::EmbedFooter.new(
                         text:     "#{json["country"]} (#{country_rank})",
-                        icon_url: "#{CONFIG[:flag][:url]}#{json["country"].downcase}.png"
+                        icon_url: "#{FLAG_URL}#{json["country"].downcase}.png"
                     )
                     embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(
                         url: "https://a.ppy.sh/#{json["user_id"]}"
@@ -83,7 +87,7 @@ module Bot
                 end
             end
 
-            command(:steam, usage: 'steam <ユーザー名>', description: 'Steamのユーザー情報を表示') do |event, query|
+            command(:steam, usage: 'steam <ユーザー名>', description: 'Steamのユーザー情報を表示', min_args: 1) do |event, query|
 
                 # Capybara/Poltergistの設定
                 Capybara.register_driver :poltergeist do |app|
@@ -102,18 +106,18 @@ module Bot
                 id = nil
 
                 # Steam IDの取得
-                if url.match(PROFILE_REGEXP)
+                if url.match(STEAM_PROFILE_REGEXP)
                     # プロフィールページの場合
                     id = url.match(/\d+/)[0]
                 else
                     # カスタムURLの場合
                     vanityid = url.match(/id\/(.*)$/)[1]
-                    vanitapi = "#{CONFIG[:steam][:vanitapi]}#{apikey}&vanityurl=#{vanityid}"
+                    vanitapi = "#{STEAM_VANITY_API}#{apikey}&vanityurl=#{vanityid}"
                     json = get_json(vanitapi)
                     id = json["response"]["steamid"]
                 end
 
-                playerapi = "#{CONFIG[:steam][:playerapi]}#{apikey}&steamids=#{id}"
+                playerapi = "#{STEAM_PLAYER_API}#{apikey}&steamids=#{id}"
                 json = get_json(playerapi)["response"]["players"][0]
                 
                 event.channel.send_embed do |embed|
@@ -179,11 +183,6 @@ module Bot
                         embed.timestamp = last_online
                     end
                 end
-            end
-
-            command(:test) do |event|
-                server = event.server
-                server.default_channel.send_message("#{event.user.mention}, Welcome to #{server.name}")
             end
         end
     end
