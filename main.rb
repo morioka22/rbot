@@ -11,7 +11,8 @@ module Bot
     BOT = Discordrb::Commands::CommandBot.new(
         token:     CONFIG[:bot][:token],
         client_id: CONFIG[:bot][:id],
-        prefix:    CONFIG[:bot][:prefix]
+        prefix:    CONFIG[:bot][:prefix],
+        advanced_functionality: true
     )
 
     # コマンドの読み込み
