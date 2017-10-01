@@ -25,6 +25,12 @@ module Bot
                     end
                 end
             end
+
+            command(:shutdown, usage: 'shutdown', description: 'Botを終了') do |event|
+                next unless event.author == '153106386585255936'
+                exit(0)
+                nil
+            end
         end
     end
 end
