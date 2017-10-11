@@ -26,6 +26,11 @@ module Bot
                 end
             end
 
+            command(:setGame, usage: 'setGame <ゲーム名>', description: 'プレイ中のゲームを設定') do |event, game|
+                BOT.game = game
+                nil
+            end
+
             command(:shutdown, usage: 'shutdown', description: 'Botを終了') do |event|
                 next unless event.author == '153106386585255936'
                 exit(0)
