@@ -26,7 +26,7 @@ module Bot
                 end
             end
 
-            command(:setGame, usage: 'setGame <ゲーム名>', description: 'プレイ中のゲームを設定') do |event, game|
+            command(:setGame, usage: 'setGame <ゲーム名>', description: 'プレイ中のゲームを設定', min_args: 1) do |event, game|
                 BOT.game = game
                 nil
             end
