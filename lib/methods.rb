@@ -28,3 +28,13 @@ def get_json(location, limit = 10)
         # handle error
     end
 end
+
+def post_json(location, json)
+    uri = URI.parse(location)
+    https = Net::HTTP.new(uri.host, uri.port)
+    https.use_ssl = true
+    req = Net::HTTP::Post.new(uri.request_uri)
+    req["Content-Type"] = "application/json"
+    req.body = json
+    return https.request(req)
+end
