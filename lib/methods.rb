@@ -1,6 +1,7 @@
 require 'net/http'
 require 'uri'
 require 'json'
+require 'time'
 
 def get_json(location, limit = 10)
     raise ArgumentError, 'too many HTTP redirects' if limit == 0
@@ -37,4 +38,14 @@ def post_json(location, json)
     req["Content-Type"] = "application/json"
     req.body = json
     return https.request(req)
+end
+
+# 正規表現でマッチした曜日を3文字の英語に変換
+def match_to_wday(str)
+    str.downcase!
+    if str =~ /^今日|^today/
+        return Time.now.strftime("%a").downcase
+    end
+    i = %w(^日|^sun ^月|^mon ^火|^tue ^水|^wed ^木|^thu ^金|^fri ^土|^sat).index{|r| str =~ /#{r}/}
+    return %w(sun mon tue wed thu fri sat)[i] if i
 end
