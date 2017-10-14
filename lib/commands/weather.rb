@@ -15,7 +15,7 @@ module Bot
                 uri = URI.parse(JPN_WEATHER_FORECAST + "#{id}.js")
                 jsonp = Net::HTTP.get(uri)
                 # JSONP -> JSONに変換
-                json = JSON.load(jsonp.match(/\.callback\((.*)\)/)[1])
+                json = JSON.load(jsonp.to_json)
 
                 weather = nil
 
