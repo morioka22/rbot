@@ -1,4 +1,5 @@
 ENV["SSL_CERT_FILE"] = 'E:/program/lib/cacert.pem'
+::RBNACL_LIBSODIUM_GEM_LIB_PATH = 'E:/program/lib/libsodium.dll'
 
 require 'discordrb'
 require 'yaml'
