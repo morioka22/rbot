@@ -1,6 +1,6 @@
 class String
     def with_comma
-        self.gsub(/(\d)(?=\d{3}+$)/, '\\1,')
+        self.gsub(/(\d)(?=\d{3}+$)/) { $1 + ',' }
     end
 
     # jsonpをjsonに変換
