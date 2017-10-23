@@ -31,6 +31,12 @@ module Bot
                 nil
             end
 
+            command(:reboot, usage: 'reboot', description: 'Botを再起動') do |event|
+                next unless event.author == '153106386585255936'
+                exec 'ruby main.rb'
+                nil
+            end
+
             command(:shutdown, usage: 'shutdown', description: 'Botを終了') do |event|
                 next unless event.author == '153106386585255936'
                 exit(0)
