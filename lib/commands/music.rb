@@ -13,7 +13,8 @@ module Bot
             end
 
             command(:disconnect) do |event|
-                unless event.bot.voices.empty?
+                # コマンドを実行したサーバーのIDが入っているかチェック
+                if event.bot.voices.has_key?(event.server.id)
                     event.voice.destroy
                     nil
                 else
