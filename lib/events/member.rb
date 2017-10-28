@@ -5,7 +5,7 @@ module Bot
             
             # メンバー参加時
             member_join do |event|
-                event.server.default_channel.send_embed do |embed|
+                event.server.text_channels[0].send_embed do |embed|
                     embed.title = "Member Joined"
                     embed.color = 14103594
                     embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(
