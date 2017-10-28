@@ -36,6 +36,12 @@ module Bot
                 event.voice.skip(sec.to_f)
                 nil
             end
+
+            command(:volume, usage: 'volume <数値>', description: '音量を設定(0~200)', min_args: 1) do |event, vol|
+                next unless (0.0..2.0).include?(vol.to_f)
+                event.voice.volume = vol.to_f
+                nil
+            end
         end
     end
 end
