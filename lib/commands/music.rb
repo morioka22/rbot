@@ -3,7 +3,7 @@ module Bot
         module MusicCommands
             extend Discordrb::Commands::CommandContainer
 
-            command(:connect) do |event|
+            command(:connect, usage: 'connect', description: 'ボイスチャンネルに接続') do |event|
                 if channel = event.user.voice_channel
                     BOT.voice_connect(channel)
                     nil
@@ -12,7 +12,7 @@ module Bot
                 end
             end
 
-            command(:disconnect) do |event|
+            command(:disconnect, usage: 'disconnect', description: 'ボイスチャンネルから切断') do |event|
                 # コマンドを実行したサーバーのIDが入っているかチェック
                 if event.bot.voices.has_key?(event.server.id)
                     event.voice.destroy
@@ -22,17 +22,17 @@ module Bot
                 end
             end
 
-            command(:pause) do |event|
+            command(:pause, usage: 'pause', description: '一時停止') do |event|
                 event.voice.pause
                 event.respond '一時停止'
             end
 
-            command(:stop) do |event|
+            command(:stop, usage: 'stop', description: '再生停止') do |event|
                 event.voice.stop_playing
                 event.respond '再生停止'
             end
 
-            command(:skip) do |event, sec|
+            command(:skip, usage: 'skip <秒数>', description: '音声を秒数分スキップ', min_args: 1) do |event, sec|
                 event.voice.skip(sec.to_f)
                 nil
             end
