@@ -28,6 +28,19 @@ module Bot
                 event.respond member.avatar_url
             end
 
+            # コマンドを打ったユーザー or 指定したメンバー のサーバー参加日を表示
+            command(:joinedAt, usage: 'joinedAt <メンション>', description: 'メンバーのサーバー参加日を表示', min_args: 0) do |event, mention|
+                if mention.nil?
+                    date = event.user.joined_at.strftime("%Y/%m/%d")
+                    event.respond("あなたの参加日: #{date}")
+                else
+                    id = mention.slice(/\d+/)
+                    member = event.server.member(id)
+                    date = member.joined_at.strftime("%Y/%m/%d")
+                    event.respond("メンションされたメンバーの参加日: #{date}")
+                end
+            end
+
             # キック
             command(:kick, usage: 'kick <メンション>', description: 'メンバーをキック', min_args: 1) do |event, mention|
                 id = mention.slice(/\d+/)
